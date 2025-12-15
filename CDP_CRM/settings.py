@@ -161,3 +161,14 @@ LOGIN_URL = "users:login"
 LOGIN_REDIRECT_URL = "users:fichar"
 LOGOUT_REDIRECT_URL = "users:login"
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://crm-a-1.onrender.com",
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
