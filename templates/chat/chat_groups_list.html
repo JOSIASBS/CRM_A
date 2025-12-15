@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Mis chats</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Mis Chats</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        {% if empleado.role != 'empleado' %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+        {% endif %}
+        <a href="/chat/">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+
+    <div class="top-links">
+        <a class="btn-link" href="{% url 'chat:crear_chat' %}">Crear nuevo chat</a>
+        {% if obtener_grupo_anuncios %}
+            <a class="btn-link" href="{% url 'chat:chat_group_detail' obtener_grupo_anuncios.id %}">
+                # Anuncios
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="chat-columns">
+
+        <!-- ================== CHATS GRUPALES ================== -->
+        <div class="chat-column">
+            <h2>Chats grupales</h2>
+            <ul class="chats-list">
+                {% for g in grupos %}
+               <li class="chat-item">
+    <div class="chat-avatar">
+        {{ g.name|slice:":1" }}
+    </div>
+
+    <div class="chat-content">
+        <div class="chat-name">{{ g.name }}</div>
+        <div class="chat-details">
+            {{ g.members.count }} miembros
+        </div>
+    </div>
+
+    <a class="chat-link" href="{% url 'chat:chat_group_detail' g.id %}"></a>
+</li>
+
+                {% empty %}
+                    <li>No perteneces a ningún grupo.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- ================== CHATS PRIVADOS ================== -->
+        <div class="chat-column">
+            <h2>Chats privados</h2>
+            <ul class="chats-list">
+               {% for p in privados %}
+    {% for member in p.members.all %}
+        {% if member != empleado %}
+        <li class="chat-item">
+
+            {% include "users/_avatar.html" with user=member %}
+
+            <div class="chat-content">
+                <div class="chat-name">
+                    {{ member.get_full_name|default:member.username }}
+                </div>
+                <div class="chat-details">
+                    Chat privado
+                </div>
+            </div>
+
+            <a class="chat-link"
+               href="{% url 'chat:chat_group_detail' p.id %}"></a>
+
+        </li>
+        {% endif %}
+    {% endfor %}
+{% empty %}
+    <li>No tienes chats privados.</li>
+{% endfor %}
+
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

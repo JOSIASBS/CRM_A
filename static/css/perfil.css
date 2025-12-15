@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f1f5f9;
+    margin: 0;
+    padding: 0;
+    color: #0d141b;
+}
+
+/* ---- ENCABEZADO ---- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px 30px;
+    border-bottom: 1px solid #e7edf3;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #0d141b;
+}
+
+header nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #0d141b;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+header nav a:hover {
+    color: #1172d4;
+}
+
+/* ---- CONTENEDOR PRINCIPAL ---- */
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* ---- TÍTULOS ---- */
+h1 {
+    margin-top: 0;
+    color: #0d141b;
+    margin-bottom: 20px;
+}
+
+/* ---- MENSAJES ---- */
+.messages-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.messages-list li {
+    background-color: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+
+.perfil-form input,
+.perfil-form select,
+.perfil-form textarea {
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #cfdbe7;
+    font-size: 1rem;
+    outline: none;
+}
+
+.perfil-form input:focus,
+.perfil-form select:focus,
+.perfil-form textarea:focus {
+    border-color: #1172d4;
+    box-shadow: 0 0 0 2px rgba(17,114,212,0.2);
+    background-color: #fff;
+}
+
+.perfil-form button {
+    background-color: #1172d4;
+    color: white;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.perfil-form button:hover {
+    background-color: #0e5cb3;
+}
+
+
+a {
+    color: #1172d4;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.perfil-form p {
+    margin: 0 0 15px 0;
+}
+
+.perfil-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #0d141b;
+}
+
+.perfil-form input,
+.perfil-form select,
+.perfil-form textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+.perfil-container {
+    max-width: 550px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+}
+
+.avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+}
+
+.avatar-letra {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 45px;
+    font-weight:700;
+    color:white;
+    margin: auto;
+    margin-bottom: 15px;
+}
+
+.acciones {
+    margin-top: 25px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+}
+
+.btn {
+    padding: 10px 18px;
+    border-radius: 10px;
+    background:#1172d4;
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.btn-sec {
+    background:#475569;
+}
+
+h2 {
+    margin-top: 30px;
+    font-size: 1.2rem;
+    color: #0d141b;
+}
+.messages-list {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.message.success {
+    background-color: #e6f4ea;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.message.error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.message.warning {
+    background-color: #fef9c3;
+    color: #854d0e;
+    border: 1px solid #fde68a;
+}

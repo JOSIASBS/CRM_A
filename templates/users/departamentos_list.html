@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Departamentos</title>
+    <link rel="stylesheet" href="{% static 'css/departamentos.css' %}">
+</head>
+<body>
+<header>
+    <div class="logo">Departamentos</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        {% if empleado.role != 'empleado' %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+        {% endif %}
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Departamentos</h1>
+
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre del Departamento</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in departamentos %}
+            <tr>
+                <td>
+  <a href="{% url 'users:departamento_detail' d.id %}">
+    <strong>{{ d.name }}</strong>
+  </a>
+</td>
+
+                <td>{{ d.description|default:"-" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No hay departamentos.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

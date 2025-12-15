@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Departamento Manager</title>
+    <link rel="stylesheet" href="{% static 'css/departamentos.css' %}">
+</head>
+<body>
+<header>
+    <div class="logo">Departamentos</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        {% if empleado.role != 'empleado' %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+        {% endif %}
+         <!--<a href="/reportes/">Reportes</a>-->
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>Departamento: {{ departamento.name }}</h2>
+    <p>{{ departamento.description }}</p>
+
+    <div style="display:flex; gap: 20px; margin: 15px 0;">
+        <p><strong>Total de empleados:</strong> {{ total_empleados }}</p>
+        <p><strong>Conectados:</strong> {{ conectados }}</p>
+    </div>
+
+    <h3>Lista de empleados</h3>
+    <ul>
+        {% for emp in empleados %}
+        <li>
+    <span>
+        {{ emp.get_full_name|default:emp.username }}
+        — <strong>{{ emp.role|title }}</strong>
+    </span>
+            {% if emp.user.last_login %}
+                {% if emp.user.last_login|timesince < "10 minutes" %}
+                    <span class="status conectado">🟢 Conectado</span>
+                {% else %}
+                    <span class="status desconectado">🔴 Desconectado</span>
+                {% endif %}
+            {% endif %}
+        </li>
+        {% empty %}
+        <li>No hay empleados en este departamento.</li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>

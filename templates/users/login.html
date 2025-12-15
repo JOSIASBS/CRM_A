@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Empleados</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+
+<div class="login-container">
+
+    <div class="login-header">
+        <h1>Iniciar sesión</h1>
+        <p>Accede con tus credenciales</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if error %}
+            <p style="color:red;">{{ error }}</p>
+        {% endif %}
+
+        <div class="input-group">
+            <label for="username">Usuario</label>
+            <input type="text" name="username" id="username" placeholder="Introduce tu usuario" required>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Contraseña</label>
+            <input type="password" name="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox">
+                Recordarme
+            </label>
+        </div>
+
+        <button type="submit" class="login-button">Iniciar sesión</button>
+
+        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+    </form>
+</div>
+
+</body>
+</html>

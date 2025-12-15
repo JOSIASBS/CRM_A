@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Editar Perfil</div>
+    <nav>
+        <a href="{% url 'users:perfil' %}">Volver</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="perfil-container">
+
+    <h1>Datos personales</h1>
+
+    <form method="post" enctype="multipart/form-data" class="perfil-form">
+    {% csrf_token %}
+    {{ perfil_form.as_p }}
+
+    <div class="acciones">
+        <button type="submit" class="btn">Guardar cambios</button>
+        <a href="{% url 'users:cambiar_password' %}" class="btn secundario">
+            Cambiar contraseña
+        </a>
+    </div>
+</form>
+
+
+</div>
+
+</body>
+</html>

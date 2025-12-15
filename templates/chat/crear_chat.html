@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Crear Chat</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Crear nuevo chat</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        <a href="/empleados">Empleados</a>
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <form method="post" class="form-create-chat">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <label>Tipo de chat</label>
+            <select name="tipo" required>
+                <option value="group">Grupo</option>
+                <option value="private">Privado</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Nombre (solo para grupo)</label>
+            <input type="text" name="name">
+        </div>
+
+        <div class="input-group">
+            <label>Selecciona miembros</label>
+            <div class="members-list">
+                {% for u in usuarios %}
+                    <label class="member-item">
+                        <input type="checkbox" name="members" value="{{ u.id }}">
+                        {{ u.username }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button type="submit" class="btn send-btn">Crear chat</button>
+    </form>
+</div>
+
+
+</body>
+</html>

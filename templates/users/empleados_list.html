@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Empleados</title>
+    <link rel="stylesheet" href="{% static 'css/empleados.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Empleados</div>
+     <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        {% if empleado.role != 'empleado' %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+        {% endif %}
+         <!--<a href="/reportes/">Reportes</a>-->
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Lista de empleados</h1>
+
+    <form method="get" class="filtros">
+        <input type="text" name="nombre" placeholder="Buscar por nombre" value="{{ request.GET.nombre }}">
+        <input type="date" name="fecha" value="{{ request.GET.fecha }}">
+
+        {% if is_admin %}
+        <select name="departamento">
+            <option value="">Todos los departamentos</option>
+            {% for d in departamentos %}
+                <option value="{{ d.id }}" {% if request.GET.departamento == d.id|stringformat:"s" %}selected{% endif %}>
+                    {{ d.name }}
+                </option>
+            {% endfor %}
+        </select>
+        {% endif %}
+
+        <button type="submit" class="btn-filtrar">Filtrar</button>
+        <a href="{% url 'users:empleados_list' %}" class="btn-limpiar">Limpiar</a>
+    </form>
+
+    <ul class="empleados-list">
+        {% for e in empleados %}
+            <li>
+    <div class="empleado-item">
+        {% include "users/_avatar.html" with user=e %}
+
+    </div>
+
+    <div class="info">
+        <a href="{% url 'users:empleado_detail' e.id %}" class="nombre">
+            {{ e.get_full_name|default:e.username }}
+        </a>
+        <span class="detalle">
+            {{ e.role|title }}
+            {% if e.department %}
+                ({{ e.department.name }})
+            {% endif %}
+            • Contratado: {{ e.fecha_contratacion|default:"-" }}
+        </span>
+    </div>
+</li>
+
+        {% empty %}
+            <li>No hay empleados.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Fichaje de {{ empleado.username }}</title>
+    <link rel="stylesheet" href="{% static 'css/fichaje.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo">Fichaje</div>
+        <nav>
+            <a href="/fichar/">Fichaje</a>
+            <a href="/departamentos/">Departamentos</a>
+           {% if not empleado.is_employee %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+            {% endif %}
+            <!--<a href="/reportes/">Reportes</a>-->
+            <a href="/chat">Chat</a>
+            <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+            <a href="/events/calendario/">Calendario</a>
+            <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+            <a href="{% url 'users:logout' %}">Salir</a>
+        </nav>
+    </header>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+    <main class="container">
+        <h1>Bienvenido/a, {{ empleado.get_full_name|default:empleado.username }}</h1>
+        <p class="role">
+            Rango:
+            {% if empleado.role == 'admin' %} Administrador
+            {% elif empleado.role == 'manager' %} Manager
+            {% else %} Empleado
+            {% endif %}
+        </p>
+
+        <section class="fichaje-box">
+            {% if fichaje_hoy %}
+                <p><strong>Entrada:</strong> {{ fichaje_hoy.hora_entrada }}</p>
+                {% if fichaje_hoy.hora_salida %}
+                    <p><strong>Salida:</strong> {{ fichaje_hoy.hora_salida }}</p>
+                    <p class="completed">Fichaje completado</p>
+                {% else %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="salida" class="btn salida">Fichar salida</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="entrada" class="btn entrada">Fichar entrada</button>
+                </form>
+            {% endif %}
+        </section>
+
+        <section class="historial">
+            <h2>Historial de fichajes</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in fichajes %}
+                        <tr>
+                            <td>{{ f.fecha }}</td>
+                            <td>{{ f.hora_entrada }}</td>
+                            <td>{{ f.hora_salida|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

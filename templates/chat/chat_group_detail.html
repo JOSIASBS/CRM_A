@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Grupo - {{ grupo.name }}</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <script src="{% static 'js/chat.js' %}"></script>
+<script>startChatWS({{ grupo.id }});</script>
+
+</head>
+<body>
+
+<header>
+    <div class="logo">{{ grupo.name }}</div>
+    <nav>
+        <a href="{% url 'chat:chat_groups_list' %}">Volver a chats</a>
+        {% if empleado in grupo.members.all and not grupo.is_private %}
+<form method="post"
+      action="{% url 'chat:salir_grupo' grupo.id %}"
+      style="display:inline;">
+    {% csrf_token %}
+    <button type="submit" class="header-link danger">
+        Salir del grupo
+    </button>
+</form>
+{% endif %}
+
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    {% if solo_en_grupo %}
+    <p><em>No hay nadie más en este chat.</em></p>
+{% endif %}
+
+    <p>{{ grupo.descripcion }}</p>
+
+    <h2>Mensajes</h2>
+    <ul class="messages">
+        {% for m in mensajes %}
+           {% if m.sender == empleado %}
+    <li class="chat-bubble receiver">
+        {{ m.content }}
+        <em style="display:block; font-size:0.75rem; margin-top:4px;">({{ m.timestamp|date:"d/m/Y H:i" }})</em>
+    </li>
+{% else %}
+    <li class="chat-bubble sender">
+        <strong>{{ m.sender.get_full_name|default:m.sender.username }}:</strong> {{ m.content }}
+        <em style="display:block; font-size:0.75rem; margin-top:4px;">({{ m.timestamp|date:"d/m/Y H:i" }})</em>
+    </li>
+{% endif %}
+
+        {% empty %}
+            <li>No hay mensajes.</li>
+        {% endfor %}
+    </ul>
+
+    {% if puede_enviar %}
+    <form class="send-message" onsubmit="event.preventDefault(); sendChatWS(document.getElementById('msg-input').value); document.getElementById('msg-input').value='';">
+  <input id="msg-input" class="chat-input" placeholder="Escribe un mensaje..." />
+  <button type="submit" class="chat-send-btn">Enviar</button>
+</form>
+    {% else %}
+    <p><em>No puedes enviar mensajes en este grupo.</em></p>
+    {% endif %}
+</div>
+
+</body>
+</html>

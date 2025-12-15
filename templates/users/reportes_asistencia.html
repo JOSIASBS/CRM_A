@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reportes de Asistencia</title>
+<link rel="stylesheet" href="{% static 'users/css/reportes.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="logo">Reportes de Asistencia</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        {% if empleado.role != 'empleado' %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+        {% endif %}
+        <a href="/reportes/">Reportes</a>
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <form method="get" action="" class="filtros">
+        <input type="text" id="nombre" name="nombre" placeholder="Filtrar por nombre" value="{{ nombre }}">
+        <button type="submit">Buscar</button>
+        {% if nombre %}
+            <a href="{% url 'users:reportes' %}">Quitar filtro</a>
+        {% endif %}
+    </form>
+
+    {% for r in reportes %}
+    <div class="reporte-card">
+        <h2>{{ r.empleado.user.get_full_name|default:r.empleado.username }}</h2>
+        <p>Horas trabajadas: {{ r.total_horas|floatformat:2 }} h</p>
+        <p>Días trabajados: {{ r.dias_trabajados }}</p>
+        <p>Retrasos: {{ r.retrasos }}</p>
+        <p>Días libres: {{ r.dias_faltas|length }}</p>
+
+        <canvas id="horas_{{ r.empleado.id }}"></canvas>
+        <script>
+            const ctx{{ r.empleado.id }} = document.getElementById('horas_{{ r.empleado.id }}').getContext('2d');
+            const chart{{ r.empleado.id }} = new Chart(ctx{{ r.empleado.id }}, {
+                type: 'bar',
+                data: {
+                    labels: ['Horas trabajadas', 'Retrasos', 'Días libres'],
+                    datasets: [{
+                        label: 'Mes {{ mes }}',
+                        data: [{{ r.total_horas|floatformat:2 }}, {{ r.retrasos }}, {{ r.dias_faltas|length }}],
+                        backgroundColor: ['#4caf50','#f44336','#2196f3']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+        </script>
+    </div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

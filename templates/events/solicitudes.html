@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitudes</title>
+    <link rel="stylesheet" href="{% static 'css/solicitudes.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Solicitudes</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        <a href="/empleados">Empleados</a>
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Solicitudes</h1>
+
+    {# FORMULARIO SOLO PARA EMPLEADOS #}
+    {% if empleado.role != 'admin' %}
+        <h2>Crear solicitud</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <p>
+                <label>Tipo</label>
+                <select name="tipo" required>
+                    <option value="vacaciones">Vacaciones</option>
+                    <option value="permiso">Permiso</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </p>
+
+            <p>
+                <label>Fecha inicio</label>
+                <input type="date" name="fecha_inicio" required>
+            </p>
+
+            <p>
+                <label>Fecha fin</label>
+                <input type="date" name="fecha_fin" required>
+            </p>
+
+            <p>
+                <label>Descripción</label>
+                <textarea name="descripcion"></textarea>
+            </p>
+
+            <button type="submit">Enviar solicitud</button>
+        </form>
+    {% endif %}
+
+    <h2>Listado de solicitudes</h2>
+
+    <table>
+        <tr>
+            <th>Empleado</th>
+            <th>Tipo</th>
+            <th>Fecha inicio</th>
+            <th>Fecha fin</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+
+            {% if empleado.role == 'admin' or empleado.role == 'manager' %}
+                <th>Acciones</th>
+            {% endif %}
+        </tr>
+
+        {% for s in solicitudes %}
+        <tr>
+            <td>{{ s.user.get_full_name|default:s.user.username }}</td>
+            <td>{{ s.get_tipo_display }}</td>
+            <td>{{ s.fecha_inicio }}</td>
+            <td>{{ s.fecha_fin }}</td>
+            <td>{{ s.descripcion|default:"—" }}</td>
+            <td>{{ s.get_estado_display }}</td>
+
+            {% if empleado.role == 'admin' and s.estado == 'en_espera' %}
+            <td>
+                <a href="{% url 'events:aprobar_solicitud' s.id 'aprobar' %}">Aprobar</a> |
+                <a href="{% url 'events:aprobar_solicitud' s.id 'denegar' %}">Denegar</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+</body>
+</html>

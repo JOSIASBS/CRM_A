@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Empleado - {{ empleado.get_full_name|default:empleado.username }}</title>
+    <link rel="stylesheet" href="{% static 'css/empleados.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Empleado</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        <a href="/empleados">Empleados</a>
+         <!--<a href="/reportes/">Reportes</a>-->
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="empleado-box">
+        <h1>{{ empleado.get_full_name|default:empleado.username }}</h1>
+        <p><strong>Posición:</strong> {{ empleado.role|title }}</p>
+<p><strong>Departamento:</strong> {{ empleado.department.name|default:"-" }}</p>
+<p><strong>Fecha de contratación:</strong> {{ empleado.fecha_contratacion|default:"-" }}</p>
+
+    </div>
+
+    <div class="fichajes-box">
+        <h2>Historial de fichajes</h2>
+        <ul class="fichajes">
+            {% for f in fichajes %}
+                <li>{{ f.fecha }} — Entrada: {{ f.hora_entrada }} | Salida: {{ f.hora_salida|default:"-" }}</li>
+            {% empty %}
+                <li>No hay fichajes registrados.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

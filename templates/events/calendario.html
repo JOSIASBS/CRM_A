@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario</title>
+
+    <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+</head>
+<body>
+
+<header>
+        <div class="logo">Calendario</div>
+        <nav>
+            <a href="/fichar/">Fichaje</a>
+            <a href="/departamentos/">Departamentos</a>
+           {% if not empleado.is_employee %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+            {% endif %}
+            <!--<a href="/reportes/">Reportes</a>-->
+            <a href="/chat">Chat</a>
+            <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+            <a href="/events/calendario/">Calendario</a>
+            <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+            <a href="{% url 'users:logout' %}">Salir</a>
+        </nav>
+    </header>
+
+<div class="container">
+
+    <h1>Calendario</h1>
+
+    <div id="calendar"></div>
+
+    <h2>Crear evento</h2>
+
+    <form id="evento-form" class="form-evento">
+        {% csrf_token %}
+
+        <label>Título</label>
+        <input type="text" id="titulo" required>
+
+        <label>Tipo</label>
+        <select id="tipo">
+            <option value="reunion">Reunión</option>
+            <option value="otro">Otro</option>
+        </select>
+
+        <label>Descripción</label>
+        <textarea id="descripcion"></textarea>
+
+        <label>Inicio</label>
+        <input type="datetime-local" id="inicio" required>
+
+        <label>Fin</label>
+        <input type="datetime-local" id="fin" required>
+
+        {% if empleado.role == "admin" %}
+            <label>
+                <input type="checkbox" id="global">
+                Evento global
+            </label>
+        {% endif %}
+
+        <button type="submit" class="btn-crear-evento">
+            Crear evento
+        </button>
+    </form>
+
+</div>
+
+<script>
+/* -----------------------------
+   CSRF para Django
+------------------------------*/
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: '/events/api/eventos/',
+
+        eventClick: function(info) {
+            if (!confirm("¿Quieres borrar este evento?")) {
+                return;
+            }
+
+            fetch(`/events/api/eventos/${info.event.id}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No tienes permiso");
+                }
+                calendar.refetchEvents();
+            })
+            .catch(error => {
+                alert("No se pudo borrar el evento");
+                console.error(error);
+            });
+        }
+    });
+
+    calendar.render();
+
+    // FORMULARIO CREAR EVENTO
+    document.getElementById('evento-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        fetch('/events/api/eventos/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({
+                titulo: document.getElementById('titulo').value,
+                tipo: document.getElementById('tipo').value,
+                descripcion: document.getElementById('descripcion').value,
+                inicio: document.getElementById('inicio').value,
+                fin: document.getElementById('fin').value,
+                global: document.getElementById('global')?.checked || false
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al crear evento");
+            }
+            return response.json();
+        })
+        .then(() => {
+            calendar.refetchEvents();
+            document.getElementById('evento-form').reset();
+        })
+        .catch(error => {
+            alert("No se pudo crear el evento");
+            console.error(error);
+        });
+    });
+});
+</script>
+
+
+</body>
+</html>

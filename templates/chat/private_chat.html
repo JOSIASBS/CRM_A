@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Chat privado con {{ other.get_full_name|default:other.username }}</title>
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="logo">Chat con {{ other.get_full_name|default:other.username }}</div>
+    <nav>
+        <a href="{% url 'chat:chat_groups_list' %}">Volver a grupos</a>
+        <a href="/empleados">Volver a empleados</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <ul class="messages">
+        {% for m in mensajes %}
+            {% if m.sender == empleado %}
+    <li class="chat-bubble receiver">
+        {{ m.content }}
+        <em style="display:block; font-size:0.75rem; margin-top:4px;">({{ m.timestamp|date:"d/m/Y H:i" }})</em>
+    </li>
+{% else %}
+    <li class="chat-bubble sender">
+        <strong>{{ m.sender.get_full_name|default:m.sender.username }}:</strong> {{ m.content }}
+        <em style="display:block; font-size:0.75rem; margin-top:4px;">({{ m.timestamp|date:"d/m/Y H:i" }})</em>
+    </li>
+{% endif %}
+
+        {% empty %}
+            <li>No hay mensajes.</li>
+        {% endfor %}
+    </ul>
+
+    {% if puede_enviar %}
+    <form method="post" class="send-message">
+        {% csrf_token %}
+        {{ form.content }}
+        <button type="submit" class="btn send-btn">Enviar</button>
+    </form>
+    {% else %}
+    <p><em>No puedes enviar mensajes en este chat.</em></p>
+    {% endif %}
+</div>
+
+</body>
+</html>

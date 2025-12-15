@@ -1,0 +1,10 @@
+{% load hash_color %}
+
+{% if user.avatar %}
+    <img src="{{ user.avatar.url }}" class="avatar-sm">
+{% else %}
+    <div class="avatar-sm avatar-letra"
+         style="background-color: {{ user.username|hash_color }};">
+        {{ user.initials }}
+    </div>
+{% endif %}

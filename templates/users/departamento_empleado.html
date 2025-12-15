@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Departamento</title>
+    <link rel="stylesheet" href="{% static 'users/css/departamentos.css' %}">
+</head>
+<body>
+<header>
+    <div class="logo">Departamentos</div>
+    <nav>
+        <a href="/fichar/">Fichaje</a>
+        <a href="/departamentos/">Departamentos</a>
+        {% if empleado.role != 'empleado' %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+        {% endif %}
+         <!--<a href="/reportes/">Reportes</a>-->
+        <a href="/chat">Chat</a>
+        <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+        <a href="/events/calendario/">Calendario</a>
+        <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+        <a href="{% url 'users:logout' %}">Salir</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>Tu departamento: {{ departamento.name }}</h2>
+    <p>{{ departamento.description }}</p>
+    <p>Consulta con tu manager si deseas ver más información.</p>
+</div>
+</body>
+</html>

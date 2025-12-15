@@ -1,0 +1,64 @@
+{% load static %}
+{% load hash_color %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
+<body>
+
+<header>
+        <div class="logo">Perfil</div>
+        <nav>
+            <a href="/fichar/">Fichaje</a>
+            <a href="/departamentos/">Departamentos</a>
+           {% if not empleado.is_employee %}
+            <a href="{% url 'users:empleados_list' %}">Empleados</a>
+            {% endif %}
+            <!--<a href="/reportes/">Reportes</a>-->
+            <a href="/chat">Chat</a>
+            <a href="{% url 'users:perfil' %}">Mi Perfil</a>
+            <a href="/events/calendario/">Calendario</a>
+            <a href="{% url 'events:solicitudes' %}">Solicitudes</a>
+            <a href="{% url 'users:logout' %}">Salir</a>
+        </nav>
+    </header>
+{% if messages %}
+<div class="messages-list">
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="perfil-container">
+
+  {% if user.avatar %}
+    <img src="{{ user.avatar.url }}" class="avatar">
+{% else %}
+
+        <div class="avatar avatar-letra"
+     style="background-color: {{ user.username|hash_color }};">
+    {{ user.initials }}
+</div>
+
+    {% endif %}
+
+    <h1>{{ user.get_full_name|default:user.username }}</h1>
+
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Teléfono:</strong> {{ user.phone|default:"—" }}</p>
+    <p><strong>Dirección:</strong> {{ user.address|default:"—" }}</p>
+    <p><strong>Posición:</strong> {{ user.get_role_display|default:"—" }}</p>
+
+    <div class="acciones">
+        <a href="{% url 'users:perfil_editar' %}" class="btn">Editar Perfil</a>
+    </div>
+</div>
+
+</body>
+</html>
