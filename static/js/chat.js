@@ -1,8 +1,10 @@
 let socket = null;
 
 function startChatWS(groupId) {
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+
     socket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/' + groupId + '/'
+        protocol + "://" + window.location.host + "/ws/chat/" + groupId + "/"
     );
 
     socket.onmessage = function (e) {
@@ -10,7 +12,6 @@ function startChatWS(groupId) {
         const ul = document.querySelector(".messages");
 
         const li = document.createElement("li");
-
 
         if (data.is_me) {
             li.classList.add("chat-bubble", "receiver");
@@ -29,10 +30,22 @@ function startChatWS(groupId) {
         ul.appendChild(li);
         ul.scrollTop = ul.scrollHeight;
     };
+
+    socket.onclose = function () {
+        console.warn("WebSocket cerrado");
+    };
+
+    socket.onerror = function (err) {
+        console.error("WebSocket error", err);
+    };
 }
 
 function sendChatWS(content) {
     if (!content.trim()) return;
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        console.warn("WebSocket no está listo");
+        return;
+    }
 
     socket.send(JSON.stringify({
         content: content
