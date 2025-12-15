@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = config("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
 
 
 
@@ -86,7 +87,9 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv("postgresql://crm_cdp_user:z7SRFgh4aYD39hnraZmMqTHqM8vWj3oc@dpg-d503dsc9c44c73d9k7e0-a/crm_cdp")
+        default=config("DATABASE_URL"),
+        conn_max_age = 600,
+        ssl_require = True,
     )
 }
 
@@ -113,9 +116,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
+TIME_ZONE = 'Europe/Madrid'
 
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
